@@ -6,9 +6,9 @@ on:
         resources_to_delete:
             description: "Folder of the path of the resources to delete"
             required: true 
-    pull_request:
+    push:
         branches:
-            main
+            feature/testing-destroy-ci
           
 
 env:
