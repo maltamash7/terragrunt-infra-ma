@@ -6,6 +6,9 @@ on:
         resources_to_delete:
             description: "Folder of the path of the resources to delete"
             required: true 
+    pull_request:
+        branches:
+            main
           
 
 env:
