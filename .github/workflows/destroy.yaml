@@ -1,0 +1,46 @@
+name: Terragrunt/Terraform destroy
+
+on:
+    workflow_dispatch:
+      inputs:
+        resources_to_delete:
+            description: "Folder of the path of the resources to delete"
+            required: true 
+          
+
+env:
+    TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+    MGMT_AWS_ACCOUNT_ID: ${{ secrets.MGMT_AWS_ACCOUNT_ID }}
+    PG_AWS_ACCOUNT_ID: ${{ secrets.PG_AWS_ACCOUNT_ID }}
+    TEST_AWS_ACCOUNT_ID: ${{ secrets.TEST_AWS_ACCOUNT_ID }}
+    TEST_ACCOUNT_EMAIL: ${{ secrets.TEST_ACCOUNT_EMAIL }}
+    AWS_REGION: "eu-west-1"
+    TF_VERSION: "1.12.1"
+    TG_VERSION: "0.81.4"
+    WORKING_DIR: ${{ inputs.resources_to_delete }}
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    terragrunt_plan:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v4 
+
+        - name: Setup AWS credentials for the management account
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ env.AWS_REGION }}
+
+        - name: Run terragrunt plan 
+          uses: gruntwork-io/terragrunt-action@v2
+          with:
+            tf_version: ${{ env.TF_VERSION }}
+            tg_version: ${{ env.TG_VERSION }}
+            tg_dir: ${{ env.WORKING_DIR }}
+            tg_command: "run --all destroy"
