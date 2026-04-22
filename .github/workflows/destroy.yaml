@@ -1,14 +1,11 @@
 name: Terragrunt/Terraform destroy
 
-on:
-    workflow_dispatch:
-      inputs:
-        resources_to_delete:
-            description: "Folder of the path of the resources to delete"
-            required: true 
-    push:
-        branches:
-            feature/testing-destroy-ci
+on: 
+  workflow_dispatch:
+    inputs:
+      resources_to_delete:
+          description: "Folder of the path of the resources to delete"
+          required: true
           
 
 env:
@@ -27,7 +24,7 @@ permissions:
     pull-requests: write
 
 jobs:
-    terragrunt_plan:
+    terragrunt_destroy:
         runs-on: ubuntu-latest
 
         steps:
@@ -40,7 +37,7 @@ jobs:
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws-region: ${{ env.AWS_REGION }}
 
-        - name: Run terragrunt plan 
+        - name: Run terragrunt destroy
           uses: gruntwork-io/terragrunt-action@v2
           with:
             tf_version: ${{ env.TF_VERSION }}
